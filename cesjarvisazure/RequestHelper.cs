@@ -5,23 +5,32 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.IO;
+using System.Net.Http;
 
 namespace cesjarvisazure
 {
     public static class RequestHelper
     {
-        public static string ExecuteUrl(string url, string token, string sessionId)
+        public static string ExecuteUrl(string url, string token, string sessionId, string stuffToPost = "", string httpMethod = "GET")
         {
             string r = string.Empty;
             HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
             webRequest.Timeout = 30000;
-            webRequest.Method = "GET";
+            webRequest.Method = httpMethod;
             webRequest.CookieContainer = new CookieContainer();
-            webRequest.CookieContainer.Add(new Cookie("ASP.NET_SessionId", sessionId) { Domain = "cornerstone.csod.com" });
+            webRequest.CookieContainer.Add(new Cookie("ASP.NET_SessionId", sessionId) { Domain = new Uri(url).Host });
             webRequest.AllowAutoRedirect = false;
             webRequest.ContentType = "application/json";
             webRequest.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.2; en-US; rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 ( .NET CLR 3.5.30729; .NET4.0E)";
             webRequest.Headers.Add("Authorization", token);
+
+            if (httpMethod != HttpMethod.Get.Method)
+            {
+                using (StreamWriter requestStream = new StreamWriter(webRequest.GetRequestStream()))
+                {
+                    requestStream.Write(stuffToPost);
+                }
+            }
 
             HttpWebResponse webResponse = null;
             try
