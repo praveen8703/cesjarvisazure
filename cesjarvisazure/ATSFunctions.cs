@@ -26,7 +26,7 @@ namespace cesjarvisazure
             string responseText;
             try
             {
-                JObject postingobject = JObject.Parse(RequestHelper.ExecuteUrl(postingUrl, bearerToken, sessionIdToken, jsonStuff, HttpMethod.Put.Method));
+                JObject postingobject = JObject.Parse(await RequestHelper.ExecuteUrl(postingUrl, bearerToken, sessionIdToken, jsonStuff, HttpMethod.Put.Method));
                 JToken result = postingobject["data"].FirstOrDefault();
 
                 responseText = $"Done.";
@@ -53,7 +53,7 @@ namespace cesjarvisazure
             string responseText;
             try
             {
-                JObject postingobject = JObject.Parse(RequestHelper.ExecuteUrl(postingUrl, bearerToken, "[]", HttpMethod.Put.Method));
+                JObject postingobject = JObject.Parse(await RequestHelper.ExecuteUrl(postingUrl, bearerToken, "[]", HttpMethod.Put.Method));
                 JToken result = postingobject["data"].FirstOrDefault();
 
                 responseText = $"Done.";
@@ -80,7 +80,7 @@ namespace cesjarvisazure
             string responseText;
             try
             {
-                JObject postingobject = JObject.Parse(RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken));
+                JObject postingobject = JObject.Parse(await RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken));
                 JToken result = postingobject["data"].FirstOrDefault();
                 string numberOfApplicants = result["applicantCount"].ToString();
                 string newSubmissionCount = result["newSubmissionCount"].ToString();
@@ -109,7 +109,7 @@ namespace cesjarvisazure
             string responseText;
             try
             {
-                JObject postingobject = JObject.Parse(RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken));
+                JObject postingobject = JObject.Parse(await RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken));
                 string numberOfRecords = postingobject["totalRecords"].ToString();
                 JToken result = postingobject["data"].FirstOrDefault();
                 JToken topApplicants = result["items"].FirstOrDefault();

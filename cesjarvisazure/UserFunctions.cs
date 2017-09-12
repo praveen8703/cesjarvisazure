@@ -28,7 +28,7 @@ namespace cesjarvisazure
             
             try
             {
-                JObject searchresultobject = JObject.Parse(RequestHelper.ExecuteUrl(searchUrl, bearerToken, sessionIdToken));
+                JObject searchresultobject = JObject.Parse(await RequestHelper.ExecuteUrl(searchUrl, bearerToken, sessionIdToken));
                 JToken result = searchresultobject["data"].FirstOrDefault();
                 if (result.Any())
                 {
