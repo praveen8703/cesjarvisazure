@@ -94,6 +94,12 @@ namespace cesjarvisazure
 					int jobReqId = Convert.ToInt32(searchContextApplicants.parameters.req_id.Value);
 					return await ATSFunctions.GetTopApplicants(log, jobReqId, bearerToken, sessionIdToken);
 
+				case "get.applicant.count":
+					log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
+					var searchContextApplicantCount = request.result.contexts.FirstOrDefault(x => x.name == "get-applicant-count");
+					int jobReqId2 = Convert.ToInt32(searchContextApplicantCount.parameters.req_id.Value);
+					return await ATSFunctions.GetApplicantCount(log, jobReqId2, bearerToken, sessionIdToken);
+
 				default:
 					return await DefaultResponse.GetDefaultResponse();
 			}

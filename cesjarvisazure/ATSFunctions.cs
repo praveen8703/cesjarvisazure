@@ -68,10 +68,10 @@ namespace cesjarvisazure
 			return response;
 		}
 
-		public static async Task<ApiAiResponse> GetApplicantYesterday(TraceWriter log, string requisitionId, string bearerToken, string sessionIdToken)
+		public static async Task<ApiAiResponse> GetApplicantCount(TraceWriter log, int requisitionId, string bearerToken, string sessionIdToken)
 		{
 			//Get URL to execute
-			var requisitionUrl = TranscriptAPI.GetRequisitionDetailsURL(requisitionId);
+			var requisitionUrl = TranscriptAPI.GetJobRequisitionURL(requisitionId);
 
 			//Execute URL and return results
 			string trainingMetrics = string.Empty;
@@ -80,16 +80,19 @@ namespace cesjarvisazure
 			string responseText;
 			try
 			{
-				JObject postingobject = JObject.Parse(await RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken));
-				JToken result = postingobject["data"].FirstOrDefault();
-				string numberOfApplicants = result["applicantCount"].ToString();
-				string newSubmissionCount = result["newSubmissionCount"].ToString();
+				string responseString = await RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken);
+				JObject postingobject = JObject.Parse(responseString);
+				JToken fields = postingobject["data"].FirstOrDefault()["items"].FirstOrDefault()["fields"];
+				int applicantCount = Convert.ToInt32(fields["applicantCount"]);
+				int newSubmissionCount = Convert.ToInt32(fields["newSubmissionCount"]);
 
-				responseText = $"You have {numberOfApplicants} applications.";
+				string applicationResponse = (applicantCount == 1) ? $"You have {applicantCount} application" : $"You have {applicantCount} applications";
+				string newSubmissionResponse = (newSubmissionCount == 1) ? $"and there is {newSubmissionCount} new submission." : $"and there are {newSubmissionCount} new submissions.";
+				responseText = $"{applicationResponse} {newSubmissionResponse}";
 			}
 			catch (Exception ex)
 			{
-				responseText = "Something went wrong. Please try again.";
+				responseText = "Sorry, I can't get the applicant count right now. Please try again later.";
 			}
 
 			response.displayText = responseText;
@@ -100,7 +103,7 @@ namespace cesjarvisazure
 		public static async Task<ApiAiResponse> GetTopApplicants(TraceWriter log, int requisitionId, string bearerToken, string sessionIdToken)
 		{
 			//Get URL to execute
-			var requisitionUrl = TranscriptAPI.GetCandidateInRequisitionURL(requisitionId);
+			var requisitionUrl = TranscriptAPI.GetApplicantsURL(requisitionId);
 
 			//Execute URL and return results
 			string trainingMetrics = string.Empty;
