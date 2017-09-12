@@ -88,9 +88,11 @@ namespace cesjarvisazure
 					}
 					return await UserFunctions.SearchName(log, searchParameter, bearerToken, sessionIdToken);
 
-				case "search.applicants":
+				case "get.top.applicants":
 					log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
-					return await ATSFunctions.GetTopApplicants(log, 609, bearerToken, sessionIdToken);
+					var searchContextApplicants = request.result.contexts.FirstOrDefault(x => x.name == "get-top-applicants");
+					int jobReqId = Convert.ToInt32(searchContextApplicants.parameters.req_id.Value);
+					return await ATSFunctions.GetTopApplicants(log, jobReqId, bearerToken, sessionIdToken);
 
 				default:
 					return await DefaultResponse.GetDefaultResponse();
