@@ -100,7 +100,15 @@ namespace cesjarvisazure
 					int jobReqId2 = Convert.ToInt32(searchContextApplicantCount.parameters.req_id.Value);
 					return await ATSFunctions.GetApplicantCount(log, jobReqId2, bearerToken, sessionIdToken);
 
-				default:
+                case "create.job.posting":
+                    log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
+                    return await ATSFunctions.CreatePosting(log, 609, 44, bearerToken, sessionIdToken);
+
+                case "remove.job.posting":
+                    log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
+                    return await ATSFunctions.RemovePosting(log, 609,bearerToken, sessionIdToken);
+
+                default:
 					return await DefaultResponse.GetDefaultResponse();
 			}
 

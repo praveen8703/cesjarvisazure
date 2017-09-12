@@ -26,10 +26,12 @@ namespace cesjarvisazure
 			string responseText;
 			try
 			{
-				JObject postingobject = JObject.Parse(await RequestHelper.ExecuteUrl(postingUrl, bearerToken, sessionIdToken, jsonStuff, HttpMethod.Put.Method));
-				JToken result = postingobject["data"].FirstOrDefault();
+                
+                var responseJSON = await RequestHelper.ExecuteUrl(postingUrl, bearerToken, sessionIdToken, jsonStuff, HttpMethod.Put.Method);
+                JObject postingobject = JObject.Parse(responseJSON);
+                JToken result = postingobject["data"].FirstOrDefault();
 
-				responseText = $"Done.";
+                responseText = $"Posting has been created successfully for your career site.";
 			}
 			catch (Exception ex)
 			{
@@ -53,10 +55,11 @@ namespace cesjarvisazure
 			string responseText;
 			try
 			{
-				JObject postingobject = JObject.Parse(await RequestHelper.ExecuteUrl(postingUrl, bearerToken, "[]", HttpMethod.Put.Method));
+                var responseJSON = await RequestHelper.ExecuteUrl(postingUrl, bearerToken, sessionIdToken, "[]", HttpMethod.Put.Method);
+                JObject postingobject = JObject.Parse(responseJSON);
 				JToken result = postingobject["data"].FirstOrDefault();
 
-				responseText = $"Done.";
+				responseText = $"Posting has been removed successfully from your career site.";
 			}
 			catch (Exception ex)
 			{
@@ -115,19 +118,20 @@ namespace cesjarvisazure
 				//JObject postingobject = JObject.Parse(await RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken));
 				string responseString = await RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken);
 				JObject postingobject = JObject.Parse(responseString);
-				string totalRecords = postingobject["totalRecords"].ToString();
-				JToken result = postingobject["data"].FirstOrDefault();
+                string totalRecords = postingobject["totalRecords"].ToString();
+                JToken result = postingobject["data"].FirstOrDefault();
+                string results = string.Join(", ", result["items"].Take(3).Select(x => x["fields"]["name"]));
 
-				JToken app1 = result["items"][0];
-				string app1Name = app1["fields"]["name"].ToString();
+                //JToken app1 = result["items"][0];
+                //string app1Name = app1["fields"]["name"].ToString();
 
-				JToken app2 = result["items"][1];
-				string app2Name = app2["fields"]["name"].ToString();
+                //JToken app2 = result["items"][1];
+                //string app2Name = app2["fields"]["name"].ToString();
 
-				JToken app3 = result["items"][2];
-				string app3Name = app3["fields"]["name"].ToString();
+                //JToken app3 = result["items"][2];
+                //string app3Name = app3["fields"]["name"].ToString();
 
-				responseText = $"There are {totalRecords} results. The top 3 applicants are: {app1Name}, {app2Name}, {app3Name}.";
+                responseText = $"There are {totalRecords} results. The top 3 applicants are: {results}.";
 			}
 			catch (Exception ex)
 			{
