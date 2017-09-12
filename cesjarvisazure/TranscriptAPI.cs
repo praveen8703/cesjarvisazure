@@ -46,6 +46,12 @@ namespace cesjarvisazure
             string url = string.Format("/services/api/Search/?name={0}", searchTerms);
             return baseUrl + url;
         }
+
+        public static string PostingURL(int requisitionId)
+        {
+            string url = string.Format("/services/x/career-site/v1/requisition/{0}", requisitionId);
+            return baseUrl + url;
+        }
     }
 
     public enum CandidateType
