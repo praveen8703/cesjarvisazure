@@ -71,6 +71,16 @@ namespace cesjarvisazure
                         pageNumberPrev = 1;
                     }
                     return await SearchTrainingAction.SearchTrainings(log, userId, bearerToken, sessionIdToken, pageNumberPrev);
+
+                case "search.users":
+                    log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
+                    var searchUserContext = request.result.contexts.FirstOrDefault(x => x.name == "search-users");
+                    string searchParameter = string.Empty;
+                    if (searchUserContext.parameters.search_key != null)
+                    {
+                        searchParameter = Convert.ToString(searchUserContext.parameters.search_key.Value);
+                    }
+                    return await UserFunctions.SearchName(log, searchParameter, bearerToken, sessionIdToken);
                 default:
                     return await DefaultResponse.GetDefaultResponse();
             }
