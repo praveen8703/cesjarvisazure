@@ -11,7 +11,7 @@ namespace cesjarvisazure
         public static async Task<ApiAiResponse> GetDefaultResponse()
         {
             ApiAiResponse response = new ApiAiResponse();
-            string errorResponse = "Something went wrong. Please try again.";
+            string errorResponse = "Did not find action - Something went wrong. Please try again.";
             response.displayText = errorResponse;
             response.speech = errorResponse;
             return response;

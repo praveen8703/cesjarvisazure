@@ -57,14 +57,11 @@ namespace cesjarvisazure
     {
         public string speech;
         public string displayText;
-        public string source { get; set; }
-        public object data { get; set; }
         public List<Context> contextOut { get; set; }
 
         public ApiAiResponse(List<Context> request_ctx)
         {
             contextOut = new List<Context>(request_ctx);
-            source = "<your-source>";
         }
         public ApiAiResponse() { }
 

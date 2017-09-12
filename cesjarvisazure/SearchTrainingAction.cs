@@ -16,7 +16,6 @@ namespace cesjarvisazure
         {
             //Get URL to execute
             var trainingDetailssUrl = TranscriptAPI.GetTranscriptUrl(userId, pageNumber);
-
             //Execute URL and return results
             string trainingDetails = string.Empty;
 

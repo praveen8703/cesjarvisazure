@@ -8,6 +8,7 @@ using Microsoft.Azure.WebJobs.Host;
 using System.Collections.Generic;
 using System.Dynamic;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace cesjarvisazure
 {
@@ -48,19 +49,23 @@ namespace cesjarvisazure
             switch(request.result.action.ToLowerInvariant())
             {
                 case "training.summary":
+                    log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
                     return await GetNumberOfTrainingsAssigned.GetTrainingMetrics(log, userId, bearerToken, sessionIdToken);
                 case "search.training":
                 case "search.training.repeat":
+                    log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
                     var searchContext = request.result.contexts.FirstOrDefault(x => x.name == "search-training");
-                    var pageNumber = int.Parse(searchContext.parameters.page_num.Value);
+                    int pageNumber = Convert.ToInt32(searchContext.parameters.page_num.Value);
                     return await SearchTrainingAction.SearchTrainings(log, userId, bearerToken, sessionIdToken, pageNumber);
-                case "search.training.next":
+                case "searchtraining.searchtraining-next":
+                    log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
                     var searchContextNext = request.result.contexts.FirstOrDefault(x => x.name == "search-training");
-                    var pageNumberNext = int.Parse(searchContextNext.parameters.page_num.Value) + 1;
+                    int pageNumberNext = Convert.ToInt32(searchContextNext.parameters.page_num.Value) + 1;
                     return await SearchTrainingAction.SearchTrainings(log, userId, bearerToken, sessionIdToken, pageNumberNext);
-                case "search.training.previous":
+                case "searchtraining.searchtraining-previous":
+                    log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
                     var searchContextPrev = request.result.contexts.FirstOrDefault(x => x.name == "search-training");
-                    var pageNumberPrev = int.Parse(searchContextPrev.parameters.page_num.Value) - 1;
+                    int pageNumberPrev = Convert.ToInt32(searchContextPrev.parameters.page_num.Value) - 1;
                     if(pageNumberPrev<=0)
                     {
                         pageNumberPrev = 1;
