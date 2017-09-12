@@ -1,6 +1,6 @@
-﻿using Microsoft.Azure.WebJobs.Host;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace cesjarvisazure
     public static class SearchTrainingAction
     {
         public const int PAGE_SIZE = 3;
-        public static async Task<ApiAiResponse> SearchTrainings(TraceWriter log, int userId, string bearerToken, string sessionIdToken, int pageNumber)
+        public static async Task<ApiAiResponse> SearchTrainings(ITraceWriter log, int userId, string bearerToken, string sessionIdToken, int pageNumber)
         {
             //Get URL to execute
             var trainingDetailssUrl = TranscriptAPI.GetTranscriptUrl(userId, pageNumber);

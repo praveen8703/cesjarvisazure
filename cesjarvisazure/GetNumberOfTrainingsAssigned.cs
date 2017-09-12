@@ -56,10 +56,11 @@ namespace cesjarvisazure
             {
                 JObject searchresultobject = JObject.Parse(RequestHelper.ExecuteUrl(searchUrl, bearerToken, sessionIdToken));
                 JToken result = searchresultobject["data"].FirstOrDefault();
-                string personName = result[0]["FirstName"].ToString() + " " + result[0]["LastName"].ToString();
-                string personPhone = result[0]["PhoneWork"].ToString();
-
-                responseText = $"You have {personName} results.";
+                string personName = result["FirstName"].ToString() + " " + result["LastName"].ToString();
+                string personPhone = result["PhoneWork"].ToString();
+                string managerName = result["ManagerName"].ToString();
+                string title = result["Title"].ToString();
+                responseText = $"{personName} is {title} in {searchTerms}.";
             }
             catch (Exception ex)
             {
