@@ -8,7 +8,7 @@ namespace cesjarvisazure
 {
     public static class TranscriptAPI
     {
-        public static string baseUrl = "https://la4prdsl1.csod.com";
+        public static string baseUrl = "https://cornerstone.csod.com/";
        
         public static string GetTrainingMetricsURL(int userId)
         {
