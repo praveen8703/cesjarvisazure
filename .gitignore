@@ -259,3 +259,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+cesjarvisazure/Properties/PublishProfiles/FolderProfile.pubxml
+cesjarvisazure/Properties/PublishProfiles/FunctionApp20170912015554 - Web Deploy.pubxml
