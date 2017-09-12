@@ -11,7 +11,7 @@ namespace cesjarvisazure
 {
     public static class RequestHelper
     {
-        public static string ExecuteUrl(string url, string token, string sessionId, string stuffToPost = "", string httpMethod = "GET")
+        public static async Task<string> ExecuteUrl(string url, string token, string sessionId, string stuffToPost = "", string httpMethod = "GET")
         {
             string r = string.Empty;
             HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -32,10 +32,10 @@ namespace cesjarvisazure
                 }
             }
 
-            HttpWebResponse webResponse = null;
+            WebResponse webResponse = null;
             try
             {
-                webResponse = (HttpWebResponse)webRequest.GetResponseAsync().Result;
+                webResponse = await webRequest.GetResponseAsync();
                 using (Stream responseStream = webResponse.GetResponseStream())
                 using (StreamReader sReader = new StreamReader(responseStream))
                 {

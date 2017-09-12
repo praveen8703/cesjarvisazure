@@ -24,8 +24,8 @@ namespace cesjarvisazure
             string responseText = string.Empty;
             try
             {
-
-                JObject trainingMetricsJobject = JObject.Parse(RequestHelper.ExecuteUrl(trainingDetailssUrl, bearerToken, sessionIdToken));
+                string feedback = await RequestHelper.ExecuteUrl(trainingDetailssUrl, bearerToken, sessionIdToken);
+                JObject trainingMetricsJobject = JObject.Parse(feedback);
                 JToken trainingMetricsJobjectData = trainingMetricsJobject["data"];
 
                 int recordCount = trainingMetricsJobjectData.Count();
