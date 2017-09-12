@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace cesjarvisazure
@@ -26,12 +25,12 @@ namespace cesjarvisazure
 			string responseText;
 			try
 			{
-                
-                var responseJSON = await RequestHelper.ExecuteUrl(postingUrl, bearerToken, sessionIdToken, jsonStuff, HttpMethod.Put.Method);
-                JObject postingobject = JObject.Parse(responseJSON);
-                JToken result = postingobject["data"].FirstOrDefault();
 
-                responseText = $"Posting has been created successfully for your career site.";
+				var responseJSON = await RequestHelper.ExecuteUrl(postingUrl, bearerToken, sessionIdToken, jsonStuff, HttpMethod.Put.Method);
+				JObject postingobject = JObject.Parse(responseJSON);
+				JToken result = postingobject["data"].FirstOrDefault();
+
+				responseText = $"Posting has been created successfully for your career site.";
 			}
 			catch (Exception ex)
 			{
@@ -55,8 +54,8 @@ namespace cesjarvisazure
 			string responseText;
 			try
 			{
-                var responseJSON = await RequestHelper.ExecuteUrl(postingUrl, bearerToken, sessionIdToken, "[]", HttpMethod.Put.Method);
-                JObject postingobject = JObject.Parse(responseJSON);
+				var responseJSON = await RequestHelper.ExecuteUrl(postingUrl, bearerToken, sessionIdToken, "[]", HttpMethod.Put.Method);
+				JObject postingobject = JObject.Parse(responseJSON);
 				JToken result = postingobject["data"].FirstOrDefault();
 
 				responseText = $"Posting has been removed successfully from your career site.";
@@ -115,23 +114,12 @@ namespace cesjarvisazure
 			string responseText;
 			try
 			{
-				//JObject postingobject = JObject.Parse(await RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken));
 				string responseString = await RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken);
 				JObject postingobject = JObject.Parse(responseString);
-                string totalRecords = postingobject["totalRecords"].ToString();
-                JToken result = postingobject["data"].FirstOrDefault();
-                string results = string.Join(", ", result["items"].Take(3).Select(x => x["fields"]["name"]));
-
-                //JToken app1 = result["items"][0];
-                //string app1Name = app1["fields"]["name"].ToString();
-
-                //JToken app2 = result["items"][1];
-                //string app2Name = app2["fields"]["name"].ToString();
-
-                //JToken app3 = result["items"][2];
-                //string app3Name = app3["fields"]["name"].ToString();
-
-                responseText = $"There are {totalRecords} results. The top 3 applicants are: {results}.";
+				string totalRecords = postingobject["totalRecords"].ToString();
+				JToken result = postingobject["data"].FirstOrDefault();
+				string results = string.Join(", ", result["items"].Take(3).Select(x => x["fields"]["name"]));
+				responseText = $"There are {totalRecords} results. The top 3 applicants are: {results}.";
 			}
 			catch (Exception ex)
 			{
@@ -140,6 +128,89 @@ namespace cesjarvisazure
 
 			response.displayText = responseText;
 			response.speech = responseText;
+			return response;
+		}
+
+		public static async Task<ApiAiResponse> SearchApplicants(TraceWriter log, int requisitionId, string bearerToken, string sessionIdToken, int pageNum, PagingAction paging)
+		{
+			//Get URL to execute
+			var requisitionUrl = TranscriptAPI.GetApplicantsURL(requisitionId, pageNum);
+
+			//Execute URL and return results
+			string trainingMetrics = string.Empty;
+
+			ApiAiResponse response = new ApiAiResponse();
+			string responseText = string.Empty;
+			int totalRecords = 0;
+			try
+			{
+				string responseString = await RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken);
+				JObject postingobject = JObject.Parse(responseString);
+				totalRecords = Convert.ToInt32(postingobject["totalRecords"]);
+				JToken result = postingobject["data"].FirstOrDefault();
+				string appNames = string.Join(", ", result["items"].Take(3).Select(x => x["fields"]["name"]));
+
+				if (paging == PagingAction.Init)
+					responseText = $"There are {totalRecords} results. The top 3 applicants are: {appNames}.";
+				else if (paging == PagingAction.Next)
+					responseText = $"The next applicants are: {appNames}.";
+				else if (paging == PagingAction.Previous)
+					responseText = $"The previous applicants are: {appNames}.";
+				else if (paging == PagingAction.Repeat)
+					responseText = $"Here are the results again: {appNames}.";
+			}
+			catch (Exception ex)
+			{
+				responseText = "Sorry, I can't search for applicants right now. Please try again later.";
+			}
+
+			response.displayText = responseText;
+			response.speech = responseText;
+
+			dynamic contextOutParam = new System.Dynamic.ExpandoObject();
+			contextOutParam.page_num = pageNum;
+			contextOutParam.total = totalRecords;
+			response.contextOut = new List<Context>() {
+				new Context{
+					name = "search-applicant",
+					parameters = contextOutParam,
+					lifespan = 5
+				},
+			};
+
+			return response;
+		}
+
+		public static async Task<ApiAiResponse> SelectApplicant(TraceWriter log, int requisitionId, string bearerToken, string sessionIdToken, int pageNum, int selectedNum)
+		{
+			//Get URL to execute
+			var requisitionUrl = TranscriptAPI.GetApplicantsURL(requisitionId, pageNum);
+
+			//Execute URL and return results
+			string trainingMetrics = string.Empty;
+
+			ApiAiResponse response = new ApiAiResponse();
+			string responseText = string.Empty;
+			int totalRecords = 0;
+			try
+			{
+				string responseString = await RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken);
+				JObject postingobject = JObject.Parse(responseString);
+				totalRecords = Convert.ToInt32(postingobject["totalRecords"]);
+				JToken result = postingobject["data"].FirstOrDefault();
+				string appName = result["items"][selectedNum - 1]["fields"]["name"].ToString();
+				string email = result["items"][selectedNum - 1]["fields"]["email"].ToString();
+				string phone = result["items"][selectedNum - 1]["fields"]["phone"].ToString();
+				responseText = $"And the winner by popular vote is {appName}. You can email your complaints to {email}. Or call him at {phone}." ;
+			}
+			catch (Exception ex)
+			{
+				responseText = "Sorry, I can't select that applicant right now. Please try again later.";
+			}
+
+			response.displayText = responseText;
+			response.speech = responseText;
+
 			return response;
 		}
 	}

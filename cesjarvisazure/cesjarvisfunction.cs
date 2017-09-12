@@ -1,14 +1,11 @@
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
-using System.Collections.Generic;
-using System.Dynamic;
-using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace cesjarvisazure
 {
@@ -100,18 +97,82 @@ namespace cesjarvisazure
 					int jobReqId2 = Convert.ToInt32(searchContextApplicantCount.parameters.req_id.Value);
 					return await ATSFunctions.GetApplicantCount(log, jobReqId2, bearerToken, sessionIdToken);
 
-                case "create.job.posting":
-                    log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
-                    return await ATSFunctions.CreatePosting(log, 609, 44, bearerToken, sessionIdToken);
+				case "search.applicant":
+					return await SearchApplicant(request, log, bearerToken, sessionIdToken);
 
-                case "remove.job.posting":
-                    log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
-                    return await ATSFunctions.RemovePosting(log, 609,bearerToken, sessionIdToken);
+				case "searchapplicant.searchapplicant-repeat":
+					return await SearchApplicantRepeat(request, log, bearerToken, sessionIdToken);
 
-                default:
+				case "searchapplicant.searchapplicant-next":
+					return await SearchApplicantNext(request, log, bearerToken, sessionIdToken);
+
+				case "searchapplicant.searchapplicant-previous":
+					return await SearchApplicantPrevious(request, log, bearerToken, sessionIdToken);
+
+				case "searchapplicant.searchapplicant-selectnumber":
+					return await SearchApplicantSelect(request, log, bearerToken, sessionIdToken);
+
+				case "create.job.posting":
+					log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
+					return await ATSFunctions.CreatePosting(log, 609, 44, bearerToken, sessionIdToken);
+
+				case "remove.job.posting":
+					log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
+					return await ATSFunctions.RemovePosting(log, 609, bearerToken, sessionIdToken);
+
+				default:
 					return await DefaultResponse.GetDefaultResponse();
 			}
-
 		}
+
+		#region Search Applicants
+
+		private static async Task<ApiAiResponse> SearchApplicant(ApiAiRequest request, TraceWriter log, string bearerToken, string sessionIdToken)
+		{
+			log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
+			var context = request.result.contexts.FirstOrDefault(x => x.name == "search-applicant");
+			int reqId = Convert.ToInt32(context.parameters.req_id.Value);
+			int pageNum = 1;
+			return await ATSFunctions.SearchApplicants(log, reqId, bearerToken, sessionIdToken, pageNum, PagingAction.Init);
+		}
+		private static async Task<ApiAiResponse> SearchApplicantRepeat(ApiAiRequest request, TraceWriter log, string bearerToken, string sessionIdToken)
+		{
+			log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
+			var context = request.result.contexts.FirstOrDefault(x => x.name == "search-applicant");
+			int reqId = Convert.ToInt32(context.parameters.req_id.Value);
+			int pageNum = Convert.ToInt32(context.parameters.page_num.Value);
+			return await ATSFunctions.SearchApplicants(log, reqId, bearerToken, sessionIdToken, pageNum, PagingAction.Repeat);
+		}
+		private static async Task<ApiAiResponse> SearchApplicantNext(ApiAiRequest request, TraceWriter log, string bearerToken, string sessionIdToken)
+		{
+			log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
+			var context = request.result.contexts.FirstOrDefault(x => x.name == "search-applicant");
+			int reqId = Convert.ToInt32(context.parameters.req_id.Value);
+			int total = Convert.ToInt32(context.parameters.total.Value);
+			int newPageNum = Convert.ToInt32(context.parameters.page_num.Value) + 1;
+			int pageNum = ((newPageNum * 3) > total) ? 1 : newPageNum;
+
+			return await ATSFunctions.SearchApplicants(log, reqId, bearerToken, sessionIdToken, pageNum, PagingAction.Next);
+		}
+		private static async Task<ApiAiResponse> SearchApplicantPrevious(ApiAiRequest request, TraceWriter log, string bearerToken, string sessionIdToken)
+		{
+			log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
+			var context = request.result.contexts.FirstOrDefault(x => x.name == "search-applicant");
+			int reqId = Convert.ToInt32(context.parameters.req_id.Value);
+			int newPageNum = Convert.ToInt32(context.parameters.page_num.Value) - 1;
+			int pageNum = (newPageNum == 0) ? 1 : newPageNum;
+			return await ATSFunctions.SearchApplicants(log, reqId, bearerToken, sessionIdToken, pageNum, PagingAction.Previous);
+		}
+		private static async Task<ApiAiResponse> SearchApplicantSelect(ApiAiRequest request, TraceWriter log, string bearerToken, string sessionIdToken)
+		{
+			log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
+			var context = request.result.contexts.FirstOrDefault(x => x.name == "search-applicant");
+			int reqId = Convert.ToInt32(context.parameters.req_id.Value);
+			int pageNum = Convert.ToInt32(context.parameters.page_num.Value);
+			int selectedNum = Convert.ToInt32(context.parameters.number.Value);
+			return await ATSFunctions.SelectApplicant(log, reqId, bearerToken, sessionIdToken, pageNum, selectedNum);
+		}
+
+		#endregion
 	}
 }

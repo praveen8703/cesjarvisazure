@@ -17,7 +17,7 @@ namespace cesjarvisazure
 			return baseUrl + url;
 		}
 
-		public static string GetTranscriptUrl(int userId, int pageNumber = 1, bool isCompleted = false, bool isArchived = false, bool isRemoved = false, bool isStandAlone = false, int pageSize = 30)
+		public static string GetTranscriptUrl(int userId, int pageNumber = 1, bool isCompleted = false, bool isArchived = false, bool isRemoved = false, bool isStandAlone = true, int pageSize = 30)
 		{
 			string url = string.Format("/services/api/lms/user/{0}/transcript?isCompleted={1}&isArchived={2}&isRemoved={3}&isStandAlone={4}&sortCriteria=StatusChangeDate&pageSize={5}&pageNum={6}"
 					, userId
@@ -37,9 +37,9 @@ namespace cesjarvisazure
 			return baseUrl + url;
 		}
 
-		public static string GetApplicantsURL(int requisitionId)
+		public static string GetApplicantsURL(int requisitionId, int pageNum = 1)
 		{
-			string url = string.Format("/services/api/ATS/JobRequisition/{0}/Applicants/?type=Candidate&page=1&pageSize=3", requisitionId);
+			string url = string.Format("/services/api/ATS/JobRequisition/{0}/Applicants/?type=Candidate&page={1}&pageSize=3", requisitionId, pageNum);
 			return baseUrl + url;
 		}
 
