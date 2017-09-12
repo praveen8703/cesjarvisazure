@@ -17,7 +17,7 @@ namespace cesjarvisazure
             webRequest.Timeout = 30000;
             webRequest.Method = "GET";
             webRequest.CookieContainer = new CookieContainer();
-            webRequest.CookieContainer.Add(new Cookie("ASP.NET_SessionId", sessionId) { Domain = "cornerstone.csod.com" });
+            webRequest.CookieContainer.Add(new Cookie("ASP.NET_SessionId", sessionId) { Domain = new Uri(url).Host });
             webRequest.AllowAutoRedirect = false;
             webRequest.ContentType = "application/json";
             webRequest.UserAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.2; en-US; rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13 ( .NET CLR 3.5.30729; .NET4.0E)";
