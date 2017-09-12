@@ -14,7 +14,7 @@ namespace cesjarvisazure
             return url;
         }
 
-        public static string GetTranscriptUrl(int userId, bool isCompleted = false, bool isArchived = false, bool isRemoved = false, bool isStandAlone = true, int pageSize = 20, int pageNumber = 1)
+        public static string GetTranscriptUrl(int userId, int pageNumber = 1, bool isCompleted = false, bool isArchived = false, bool isRemoved = false, bool isStandAlone = false, int pageSize = 30)
         {
             string url = string.Format("https://cornerstone.csod.com/services/api/lms/user/{0}/transcript?isCompleted={1}&isArchived={2}&isRemoved={3}&isStandAlone={4}&sortCriteria=StatusChangeDate&pageSize={5}&pageNum={6}"
                 , userId

@@ -9,7 +9,7 @@ namespace cesjarvisazure
     public class Context
     {
         public string name { get; set; }
-        public dynamic parameters;
+        public dynamic parameters { get; set; }
         public int lifespan { get; set; }
     }
 
@@ -40,7 +40,7 @@ namespace cesjarvisazure
         public string resolvedQuery { get; set; }
         public string action { get; set; }
         public bool actionIncomplete { get; set; }
-        public dynamic parameters { get; set; }
+        //public dynamic parameters { get; set; }
         public List<Context> contexts { get; set; }
         public Metadata metadata { get; set; }
         public Fulfillment fulfillment { get; set; }
@@ -85,5 +85,11 @@ namespace cesjarvisazure
     {
         public object data { get; set; }
         public string source { get; set; }
+    }
+
+    public class ContextParameter
+    {
+        public int page_num { get; set; }
+        public int page_size { get; set; }
     }
 }
