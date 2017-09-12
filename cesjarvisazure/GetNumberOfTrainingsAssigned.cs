@@ -25,7 +25,8 @@ namespace cesjarvisazure
             string responseText;
             try
             {
-                JObject trainingMetricsJobject = JObject.Parse(RequestHelper.ExecuteUrl(trainingMetricsUrl, bearerToken, sessionIdToken));
+                string feedback = await RequestHelper.ExecuteUrl(trainingMetricsUrl, bearerToken, sessionIdToken);
+                JObject trainingMetricsJobject = JObject.Parse(feedback);
                 JToken trainingMetricsJobjectData = trainingMetricsJobject["data"].FirstOrDefault();
                 string assignedCount = trainingMetricsJobjectData["assignedCount"].ToString();
                 string pastDueCount = trainingMetricsJobjectData["pastDueCount"].ToString();
@@ -56,7 +57,8 @@ namespace cesjarvisazure
             string responseText;
             try
             {
-                JObject searchresultobject = JObject.Parse(RequestHelper.ExecuteUrl(searchUrl, bearerToken, sessionIdToken));
+                string feedback = await RequestHelper.ExecuteUrl(searchUrl, bearerToken, sessionIdToken);
+                JObject searchresultobject = JObject.Parse(feedback);
                 JToken result = searchresultobject["data"].FirstOrDefault();
                 string personName = result["FirstName"].ToString() + " " + result["LastName"].ToString();
                 string personPhone = result["PhoneWork"].ToString();
@@ -86,7 +88,8 @@ namespace cesjarvisazure
             string responseText;
             try
             {
-                JObject postingobject = JObject.Parse(RequestHelper.ExecuteUrl(postingUrl, bearerToken, sessionIdToken, jsonStuff, HttpMethod.Put.Method));
+                string feedback = await RequestHelper.ExecuteUrl(postingUrl, bearerToken, sessionIdToken, jsonStuff, HttpMethod.Put.Method);
+                JObject postingobject = JObject.Parse(feedback);
                 JToken result = postingobject["data"].FirstOrDefault();
                 
                 responseText = $"Done.";
@@ -113,7 +116,8 @@ namespace cesjarvisazure
             string responseText;
             try
             {
-                JObject postingobject = JObject.Parse(RequestHelper.ExecuteUrl(postingUrl, bearerToken, "[]", HttpMethod.Put.Method));
+                string feedback = await RequestHelper.ExecuteUrl(postingUrl, bearerToken, "[]", HttpMethod.Put.Method);
+                JObject postingobject = JObject.Parse(feedback);
                 JToken result = postingobject["data"].FirstOrDefault();
                 
                 responseText = $"Done.";
@@ -140,10 +144,11 @@ namespace cesjarvisazure
             string responseText;
             try
             {
-                JObject postingobject = JObject.Parse(RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken));
+                string feedback = await RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken);
+                JObject postingobject = JObject.Parse(feedback);
                 JToken result = postingobject["data"].FirstOrDefault();
-                string numberOfApplicants = result["applicantCount"].ToString();
-                string newSubmissionCount = result["newSubmissionCount"].ToString();
+                string numberOfApplicants = result["items"].FirstOrDefault()["fields"]["applicantCount"].ToString();
+                string newSubmissionCount = result["items"].FirstOrDefault()["fields"]["newSubmissionCount"].ToString();
 
                 responseText = $"You have {numberOfApplicants} applications.";
             }
@@ -169,7 +174,8 @@ namespace cesjarvisazure
             string responseText;
             try
             {
-                JObject postingobject = JObject.Parse(RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken));
+                string feedback = await RequestHelper.ExecuteUrl(requisitionUrl, bearerToken, sessionIdToken);
+                JObject postingobject = JObject.Parse(feedback);
                 string numberOfRecords = postingobject["totalRecords"].ToString();
                 JToken result = postingobject["data"].FirstOrDefault();
                 JToken topApplicants = result["items"].FirstOrDefault();
