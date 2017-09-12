@@ -30,7 +30,7 @@ namespace cesjarvisazure
             {
                 JObject searchresultobject = JObject.Parse(await RequestHelper.ExecuteUrl(searchUrl, bearerToken, sessionIdToken));
                 JToken result = searchresultobject["data"].FirstOrDefault();
-                if (result.Any())
+                if (result!=null && result.Any())
                 {
                     string personName = result["FirstName"].ToString() + " " + result["LastName"].ToString();
                     string personPhone = result["PhoneWork"].ToString();
