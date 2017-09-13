@@ -14,8 +14,11 @@ namespace cesjarvisazure
 		[FunctionName("cesjarvisfunction")]
 		public static async Task<ApiAiResponse> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req, TraceWriter log)
 		{
-			// Bearer Token
-			IEnumerable<string> bearerTokens = new List<string>();
+            #region SESSIONDETAILS
+
+            #region LA4PIL
+            // Bearer Token
+            IEnumerable<string> bearerTokens = new List<string>();
 			req.Headers.TryGetValues(HeaderNames.BEARERTOKENHEADER, out bearerTokens);
 			if (!bearerTokens.Any())
 			{
@@ -41,10 +44,43 @@ namespace cesjarvisazure
 			}
 			string userIdToken = userIdTokens.FirstOrDefault();
 			int userId = int.Parse(userIdToken);
+            #endregion
+
+            #region DOGFOOD
+            // Bearer Token
+            IEnumerable<string> bearerTokensDogfood = new List<string>();
+            req.Headers.TryGetValues(HeaderNames.BEARERTOKENHEADERDOGFOOD, out bearerTokensDogfood);
+            if (!bearerTokensDogfood.Any())
+            {
+                log.Warning("Cannot find bearer token from header");
+            }
+            string bearerTokenDogfood = bearerTokensDogfood.FirstOrDefault();
+
+            // Session Token
+            IEnumerable<string> sessionIdTokensDogfood = new List<string>();
+            req.Headers.TryGetValues(HeaderNames.ASPSESSIONIDHEADERDOGFOOD, out sessionIdTokensDogfood);
+            if (!sessionIdTokensDogfood.Any())
+            {
+                log.Warning("Cannot find session id token from header");
+            }
+            string sessionIdTokenDogfood = sessionIdTokensDogfood.FirstOrDefault();
+
+            // UserId
+            IEnumerable<string> userIdTokensDogfood = new List<string>();
+            req.Headers.TryGetValues(HeaderNames.USERIDHEADERDOGFOOD, out userIdTokensDogfood);
+            if (!userIdTokensDogfood.Any())
+            {
+                log.Warning("Cannot find userid token from header");
+            }
+            string userIdTokenDogfood = userIdTokensDogfood.FirstOrDefault();
+            int userIdDogfood = int.Parse(userIdTokenDogfood);
+            #endregion
 
 
-			// Get request body
-			ApiAiRequest request = await req.Content.ReadAsAsync<ApiAiRequest>();
+            #endregion
+
+            // Get request body
+            ApiAiRequest request = await req.Content.ReadAsAsync<ApiAiRequest>();
 
 			switch (request.result.action.ToLowerInvariant())
 			{
@@ -83,7 +119,7 @@ namespace cesjarvisazure
 					{
 						searchParameter = Convert.ToString(searchUserContext.parameters.search_key.Value);
 					}
-					return await UserFunctions.SearchName(log, searchParameter, bearerToken, sessionIdToken);
+					return await UserFunctions.SearchName(log, searchParameter, bearerTokenDogfood, sessionIdTokenDogfood);
 
 				case "get.top.applicants":
 					log.Info($"Inside {request.result.action.ToLowerInvariant()} action");
