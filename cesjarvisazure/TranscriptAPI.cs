@@ -8,7 +8,7 @@ namespace cesjarvisazure
 {
 	public static class TranscriptAPI
 	{
-		//public static string baseUrl = "https://cornerstone.csod.com/";
+		public static string baseUrlDogfood = "https://cornerstone.csod.com/";
 		public static string baseUrl = "https://la4prdsl1.csod.com/";
 
 		public static string GetTrainingMetricsURL(int userId)
@@ -46,7 +46,7 @@ namespace cesjarvisazure
 		public static string SearchName(string searchTerms)
 		{
 			string url = string.Format("/services/api/Search/?name={0}", searchTerms);
-			return baseUrl + url;
+			return baseUrlDogfood + url;
 		}
 
 		public static string PostingURL(int requisitionId)

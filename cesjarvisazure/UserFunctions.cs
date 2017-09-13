@@ -37,7 +37,7 @@ namespace cesjarvisazure
                     string managerName = result["ManagerName"].ToString();
                     string title = result["Title"].ToString();
                     string emailAddress = result["EmailAddress"].ToString();
-                    responseText = $"Top result found is {personName} who is a {title}. Their email address is {emailAddress}";
+                    responseText = $"Here is the top result: {personName} is a {title} with email address {emailAddress}";
                 }
                 else
                 {
