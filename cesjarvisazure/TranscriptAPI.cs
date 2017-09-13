@@ -37,9 +37,9 @@ namespace cesjarvisazure
 			return baseUrl + url;
 		}
 
-		public static string GetApplicantsURL(int requisitionId)
+		public static string GetApplicantsURL(int requisitionId, int pageNum = 1)
 		{
-			string url = string.Format("/services/api/ATS/JobRequisition/{0}/Applicants/?type=Candidate&page=1&pageSize=3", requisitionId);
+			string url = string.Format("/services/api/ATS/JobRequisition/{0}/Applicants/?type=Candidate&page={1}&pageSize=3", requisitionId, pageNum);
 			return baseUrl + url;
 		}
 
