@@ -36,15 +36,16 @@ namespace cesjarvisazure
 
 				var pagedResults = trainingMetricsJobjectData.Skip(skipRecords).Take(PAGE_SIZE);
 
-				if (pagedResults.Any())
+                responseText = "Here are your trainings: ";
+                if (pagedResults.Any())
 				{
-					responseText = string.Join(". ", pagedResults.Select(x => x["title"].ToString()));
+                    responseText+= string.Join(". ", pagedResults.Select(x => x["title"].ToString()));
 				}
 
 			}
 			catch (Exception ex)
 			{
-				responseText = "Something went wrong. Please try again.";
+				responseText = "I can't search trainings right now. Please try again.";
 			}
 
 			response.displayText = responseText;
